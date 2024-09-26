@@ -10,10 +10,21 @@ intermediate_size = 1024
 num_hidden_layers = 8
 num_attention_heads = 8
 num_train_epochs = 4
-gradient_accumulation_steps = 8
-per_device_train_batch_size = 64
-warmup_steps = 300
+gradient_accumulation_steps = 128
+per_device_train_batch_size = 20
+effective_batch_size = gradient_accumulation_steps * per_device_train_batch_size
+warmup_steps = 30
 lr_scheduler_type = "cosine"
+
+dataset_path = dict(
+    path="HuggingFaceFW/fineweb-edu",
+    name="sample-10BT",
+    cache_dir="/mnt/hp-ssd/datasets",
+    revision='5b89d1ea9319fe101b3cbdacd89a903aca1d6052'
+)
+
+print(f'batch size = {effective_batch_size:,}')
+print('dataset', dataset_path)
 
 tokenizer = AutoTokenizer.from_pretrained("NousResearch/Llama-2-7b-chat-hf")
 tokenizer.bos_token = "<s>"
@@ -34,11 +45,15 @@ model_config = LlamaConfig(
 model = LlamaForCausalLM(model_config)
 print(f'model parameters = {model.num_parameters():,}')
 
-dataset = load_dataset("HuggingFaceFW/fineweb-edu", "sample-10BT",
-    cache_dir="/mnt/hp-ssd/datasets",
-    revision='5b89d1ea9319fe101b3cbdacd89a903aca1d6052'
-)
+dataset = load_dataset(**dataset_path)
+num_samples = dataset['train'].num_rows
+print(f'training samples = {num_samples:,}')
+max_steps = (num_samples // effective_batch_size) * num_train_epochs
+print(f'max training steps = {max_steps:,}')
+
+dataset = load_dataset(**dataset_path, streaming=True)
 train_dataset = dataset['train']
+
 remove_columns = set(train_dataset.features.keys()) - set(['text'])
 train_dataset = train_dataset.remove_columns(remove_columns)
 train_dataset = train_dataset.map(
@@ -55,7 +70,8 @@ training_args = TrainingArguments(
     overwrite_output_dir=False,
     save_strategy="epoch",
     evaluation_strategy="no",
-    num_train_epochs=num_train_epochs,
+    #num_train_epochs=num_train_epochs, # overwritten by max_steps when data is streaming
+    max_steps=max_steps,
     gradient_accumulation_steps=gradient_accumulation_steps,
     per_device_train_batch_size=per_device_train_batch_size,
     warmup_steps=warmup_steps, 
@@ -63,7 +79,7 @@ training_args = TrainingArguments(
     learning_rate=learning_rate,
     save_total_limit=1,
     logging_steps=1,
-    bf16=True
+    bf16=True,
 )
 
 trainer = Trainer(
@@ -74,3 +90,4 @@ trainer = Trainer(
     eval_dataset=eval_dataset
 )
 trainer.train()
+trainer.save_model("./output/finished")
