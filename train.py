@@ -1,3 +1,4 @@
+import wandb
 from transformers import AutoTokenizer
 from transformers import LlamaConfig, LlamaForCausalLM
 from transformers import Trainer, TrainingArguments, DataCollatorForLanguageModeling
@@ -9,13 +10,14 @@ hidden_size = 256
 intermediate_size = 1024
 num_hidden_layers = 8
 num_attention_heads = 8
-num_train_epochs = 4
+num_train_epochs = 1
 gradient_accumulation_steps = 128
 per_device_train_batch_size = 20
 effective_batch_size = gradient_accumulation_steps * per_device_train_batch_size
 warmup_steps = 30
 lr_scheduler_type = "cosine"
-
+save_steps = 50
+report_to = 'wandb'
 dataset_path = dict(
     path="HuggingFaceFW/fineweb-edu",
     name="sample-10BT",
@@ -49,7 +51,7 @@ dataset = load_dataset(**dataset_path)
 num_samples = dataset['train'].num_rows
 print(f'training samples = {num_samples:,}')
 max_steps = (num_samples // effective_batch_size) * num_train_epochs
-print(f'max training steps = {max_steps:,}')
+print(f'training steps = {max_steps:,}')
 
 dataset = load_dataset(**dataset_path, streaming=True)
 train_dataset = dataset['train']
@@ -68,7 +70,9 @@ data_collator = DataCollatorForLanguageModeling(
 training_args = TrainingArguments(
     output_dir='./output',
     overwrite_output_dir=False,
-    save_strategy="epoch",
+    save_strategy="steps",
+    save_steps=save_steps,
+    optim="adamw_torch_fused",
     evaluation_strategy="no",
     #num_train_epochs=num_train_epochs, # overwritten by max_steps when data is streaming
     max_steps=max_steps,
@@ -77,11 +81,14 @@ training_args = TrainingArguments(
     warmup_steps=warmup_steps, 
     lr_scheduler_type=lr_scheduler_type,
     learning_rate=learning_rate,
-    save_total_limit=1,
+    save_total_limit=2,
+    logging_nan_inf_filter=False,
     logging_steps=1,
     bf16=True,
+    report_to=report_to
 )
 
+wandb.init(project='babyllama')
 trainer = Trainer(
     model=model,
     args=training_args,
