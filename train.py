@@ -4,6 +4,8 @@ from transformers import LlamaConfig, LlamaForCausalLM
 from transformers import Trainer, TrainingArguments, DataCollatorForLanguageModeling
 from datasets import load_dataset
 
+resume_from_checkpoint = True
+
 learning_rate = 3e-4
 max_seq_length = 512
 hidden_size = 256
@@ -82,13 +84,13 @@ training_args = TrainingArguments(
     lr_scheduler_type=lr_scheduler_type,
     learning_rate=learning_rate,
     save_total_limit=2,
+    ignore_data_skip=True,
     logging_nan_inf_filter=False,
     logging_steps=1,
     bf16=True,
     report_to=report_to
 )
 
-wandb.init(project='babyllama')
 trainer = Trainer(
     model=model,
     args=training_args,
@@ -96,5 +98,6 @@ trainer = Trainer(
     train_dataset=train_dataset,
     eval_dataset=eval_dataset
 )
-trainer.train()
+wandb.init(project='babyllama')
+trainer.train(resume_from_checkpoint=resume_from_checkpoint)
 trainer.save_model("./output/finished")
