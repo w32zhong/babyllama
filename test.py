@@ -12,7 +12,7 @@ tokenizer.pad_token = "<pad>"
 
 streamer = TextStreamer(tokenizer)
 
-model = LlamaForCausalLM.from_pretrained("./output/checkpoint-1850/")
+model = LlamaForCausalLM.from_pretrained("./output/checkpoint-2100/")
 model.eval()
 model.to('cuda')
 
