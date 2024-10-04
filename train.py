@@ -4,8 +4,31 @@ from transformers import LlamaConfig, LlamaForCausalLM
 from transformers import Trainer, TrainingArguments, DataCollatorForLanguageModeling
 from datasets import load_dataset
 
+#from pytorch_optimizer import get_supported_optimizers
+#supported_optimizers = get_supported_optimizers()
+#from pytorch_optimizer import Shampoo
+#class MyTrainer(Trainer):
+#    def __init__(self, *args, **kwargs):
+#        super().__init__(*args, **kwargs)
+#
+#    def create_optimizer_and_scheduler(self, num_training_steps: int):
+#        self.optimizer = Shampoo(model.parameters(), lr=learning_rate)
+#        self.create_scheduler(num_training_steps=num_training_steps, optimizer=self.optimizer)
+
 resume_from_checkpoint = True
 
+### 109M model ###
+#learning_rate = 6e-4
+#max_seq_length = 512
+#hidden_size = 768
+#intermediate_size = 2048
+#num_hidden_layers = 12
+#num_attention_heads = 12
+#num_train_epochs = 1
+#gradient_accumulation_steps = 250
+#per_device_train_batch_size = 8
+
+### 19M model ###
 learning_rate = 3e-4
 max_seq_length = 512
 hidden_size = 256
@@ -15,11 +38,13 @@ num_attention_heads = 8
 num_train_epochs = 1
 gradient_accumulation_steps = 128
 per_device_train_batch_size = 20
+
 effective_batch_size = gradient_accumulation_steps * per_device_train_batch_size
 warmup_steps = 30
 lr_scheduler_type = "cosine"
 save_steps = 10
 report_to = 'wandb'
+#report_to = 'none'
 dataset_path = dict(
     path="HuggingFaceFW/fineweb-edu",
     name="sample-10BT",
@@ -80,7 +105,7 @@ training_args = TrainingArguments(
     max_steps=max_steps,
     gradient_accumulation_steps=gradient_accumulation_steps,
     per_device_train_batch_size=per_device_train_batch_size,
-    warmup_steps=warmup_steps, 
+    warmup_steps=warmup_steps,
     lr_scheduler_type=lr_scheduler_type,
     learning_rate=learning_rate,
     save_total_limit=2,
@@ -98,6 +123,7 @@ trainer = Trainer(
     train_dataset=train_dataset,
     eval_dataset=eval_dataset
 )
-wandb.init(project='babyllama')
+if report_to == 'wandb':
+    wandb.init(project='babyllama')
 trainer.train(resume_from_checkpoint=resume_from_checkpoint)
 trainer.save_model("./output/finished")
