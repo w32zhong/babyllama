@@ -13,9 +13,16 @@ time estimated = 156:42:50 (about 6.5 days)
 
 ## Checkpoint-2300 Example Output
 ```
-<s> Baby Llama is a 25-year-old woman who is with the world child and a year old. She is one of the most popular young women. In 2001, and the world is the world’s second largest child to become an infant, as we’ve worked together to develop an adult child. We don’t yet know whether or not life was enough to help each of us?
-Children need to be more aware of their socialization, skills, or concerns. They may not be the first to get enough sleep, nor are they working hard on it.
+<s> Baby Llama is a 25-year-old woman who is with the world child and a year old.
+She is one of the most popular young women. In 2001, and the world is the world’s
+second largest child to become an infant, as we’ve worked together to develop an
+adult child. We don’t yet know whether or not life was enough to help each of us?
+Children need to be more aware of their socialization, skills, or concerns. They
+may not be the first to get enough sleep, nor are they working hard on it.
 ```
+
+## Wandb logs
+![](training-loss-17M-2300steps.jpg)
 
 ## Reference
 1. Cramming BERT (https://arxiv.org/pdf/2212.14034)
