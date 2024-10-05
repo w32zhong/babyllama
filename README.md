@@ -1,4 +1,4 @@
-## Baby LLaMA
+## Baby LLaMA (adatped for GPU-Poor but curious people)
 ```
 hardware = 2 x RTX3060
 batch size = 2,560 (1.5K to 4K according to *Cramming BERT* [1])
@@ -6,7 +6,7 @@ model parameters = 16,585,216 (check out the original BabyLlama repo [2])
 dataset = HuggingFaceFW/fineweb-edu (46 GiB disk space)
 training tokens = sample-10BT (best be ~20 tokens/parameter per *Chinchilla law* [2])
 training samples = 9,672,101
-training steps = 3,778
+training steps = total 3,778 (saturated around 2,300)
 time per step = 150 sec/step
 time estimated = 156:42:50 (about 6.5 days)
 ```
