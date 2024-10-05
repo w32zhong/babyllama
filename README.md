@@ -11,7 +11,7 @@ time per step = 150 sec/step
 time estimated = 156:42:50 (about 6.5 days)
 ```
 
-## Checkpoint-2300 Example Output
+## Example output
 ```
 <s> Baby Llama is a 25-year-old woman who is with the world child and a year old.
 She is one of the most popular young women. In 2001, and the world is the world’s
@@ -20,6 +20,7 @@ adult child. We don’t yet know whether or not life was enough to help each of 
 Children need to be more aware of their socialization, skills, or concerns. They
 may not be the first to get enough sleep, nor are they working hard on it.
 ```
+(from Checkpoint-2300)
 
 ## Wandb logs
 ![](training-loss-17M-2300steps.jpg)
