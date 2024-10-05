@@ -48,7 +48,7 @@ report_to = 'wandb'
 dataset_path = dict(
     path="HuggingFaceFW/fineweb-edu",
     name="sample-10BT",
-    cache_dir="/mnt/hp-ssd/datasets",
+    #cache_dir="/mnt/hp-ssd/datasets",
     revision='5b89d1ea9319fe101b3cbdacd89a903aca1d6052'
 )
 
