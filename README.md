@@ -29,3 +29,4 @@ may not be the first to get enough sleep, nor are they working hard on it.
 1. Cramming BERT (https://arxiv.org/pdf/2212.14034)
 2. Original BabyLlama size configurations (https://github.com/timinar/BabyLlama/tree/main/config)
 3. Chinchilla Law (https://arxiv.org/abs/2203.15556)
+4. Scaling Law (published prior to GPT-3) (https://arxiv.org/abs/2001.08361)
